@@ -46,7 +46,9 @@ app.get('/proxy', async (req, res) => {
     }
 });
 
-// RAILWAY FIX: Must listen on "0.0.0.0" to be visible to the internet
+// This MUST be exactly this way
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server is running on port ${PORT}`);
 });
