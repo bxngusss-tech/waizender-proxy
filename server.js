@@ -10,7 +10,7 @@ app.get('/', (req, res) => {
         <html lang="en">
         <head>
             <meta charset="UTF-8">
-            <title>Waizender Proxy</title>
+            <title>Waizender</title>
             <style>
                 body { background-color: #121212; color: #00ff88; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
                 .box { background: #1e1e1e; padding: 40px; border-radius: 15px; border: 1px solid #333; }
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
             </style>
         </head>
         <body>
-            <h1>Waizender Proxy</h1>
+            <h1>Waizender</h1>
             <div class="box">
                 <form action="/proxy">
                     <input name="url" placeholder="https://google.com" required>
@@ -48,3 +48,4 @@ app.get('/proxy', async (req, res) => {
 app.listen(PORT, "0.0.0.0", () => {
     console.log("Server running on port " + PORT);
 });
+
