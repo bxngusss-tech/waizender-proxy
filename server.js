@@ -6,17 +6,20 @@ const app = express();
 
 const PORT = process.env.PORT || 10000;
 
+// 1. DISGUISE: Serves the tutoring portal
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 2. SECRET DOOR: Serves your proxy UI
 app.get('/dashboard', (req, res) => {
     const rootPath = path.join(__dirname, 'proxy.html');
     if (fs.existsSync(rootPath)) {
         res.sendFile(rootPath);
     } else {
-        res.status(404).send("proxy.html not found.");
+        res.status(404).send("Error: proxy.html not found.");
     }
 });
 
+// 3. GAME TUNNEL: Optimized for assets and media
 app.use('/service', (req, res, next) => {
     const targetUrl = req.query.url;
     if (!targetUrl) return res.status(400).send("No URL provided.");
@@ -26,34 +29,25 @@ app.use('/service', (req, res, next) => {
         changeOrigin: true,
         followRedirects: true,
         autoRewrite: true,
-        // This disguises the request so it looks like it's coming from a real PC
-        onProxyReq: (proxyReq, req, res) => {
+        onProxyReq: (proxyReq) => {
+            // Disguise as a high-end Gaming PC
             proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
-            proxyReq.setHeader('Referer', targetUrl);
-            proxyReq.setHeader('Origin', targetUrl);
         },
-        pathRewrite: { '^/service': '' },
-        onProxyRes: function (proxyRes) {
-            // Aggressively delete security headers that cause the "jumbled" look
+        onProxyRes: (proxyRes) => {
+            // STRIP SECURITY: Essential for Dashmetry/Geometry Dash clones
             delete proxyRes.headers['content-security-policy'];
             delete proxyRes.headers['content-security-policy-report-only'];
             delete proxyRes.headers['x-frame-options'];
-            delete proxyRes.headers['x-content-type-options'];
-            delete proxyRes.headers['strict-transport-security']; // Bypasses HSTS blocks
             
-            // Fixes cookies so the site stays "logged in" or keeps settings
+            // CORS FIX: Allows the game to load levels/music from other servers
+            proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+            proxyRes.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
+            
+            // COOKIE FIX
             if (proxyRes.headers['set-cookie']) {
-                proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map(cookie => 
-                    cookie.replace(/Domain=[^;]+;?/, '').replace(/SameSite=(Lax|Strict)/g, 'SameSite=None') + '; Secure'
+                proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map(c => 
+                    c.replace(/SameSite=(Lax|Strict)/gi, 'SameSite=None') + '; Secure'
                 );
             }
         },
-        onError: (err, req, res) => {
-            res.status(500).send("Proxy Error: The destination refused to connect.");
-        }
-    })(req, res, next);
-});
-
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Stealth System Active on ${PORT}`);
-});
+        onError: (err
