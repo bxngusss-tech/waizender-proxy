@@ -1,1 +1,25 @@
-
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Network Diagnostics</title>
+    <style>
+        body { background: #0d1117; color: #58a6ff; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .box { background: #161b22; border: 1px solid #30363d; padding: 30px; border-radius: 8px; width: 400px; }
+        input { width: 100%; padding: 10px; background: #0d1117; border: 1px solid #30363d; color: white; margin: 10px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #238636; color: white; border: none; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h3>System: Execute Fetch</h3>
+        <p style="font-size: 0.8rem; color: #8b949e;">[Status]: Waiting for URL...</p>
+        <form action="/service" method="GET">
+            <input name="url" placeholder="https://google.com" required>
+            <button type="submit">RUN DIAGNOSTIC</button>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') window.location.href = '/'; });
+    </script>
+</body>
+</html>
